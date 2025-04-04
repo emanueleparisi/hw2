@@ -5,9 +5,9 @@ import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
 
 class XORCipherTester extends AnyFlatSpec with ChiselScalatestTester {
-  val key  = ???
-  val data = ???
-  val width = ???
+  val key  = "b00110101"
+  val data = "b10000001"
+  val width = 8
 
   behavior of "XORCipher"
   it should "go through common case (empty -> ready -> encrypted -> decrypted -> empty" in {
@@ -24,7 +24,7 @@ class XORCipherTester extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.encrypted.expect(false.B)
       dut.clock.step()
 
-      ???
+//      ???
     }
   }
 
