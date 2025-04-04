@@ -6,9 +6,13 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 class SineWaveGenTester extends AnyFlatSpec with ChiselScalatestTester {
   def testSineWaveGen(sw: SineWave, stride: Int): Unit = {
-    ???
     test(new SineWaveGen(sw)) { dut =>
-      ???
+      dut.io.en.poke(true.B)
+      dut.io.stride.poke(stride.U)
+      for (i <- 0 until sw.period by stride) {
+        dut.io.out.expect(sw(i).S)
+        dut.clock.step(1)
+      }
     }
   }
 

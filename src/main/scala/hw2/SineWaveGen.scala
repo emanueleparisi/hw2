@@ -21,7 +21,9 @@ class SineWave(val period: Int, val amplitude: Int) {
   * @field out:     SInt      (Output)
   */
 class SineWaveGenIO (sw: SineWave) extends Bundle {
-  ???
+  val stride = Input(UInt(log2Ceil(sw.period).W))
+  val en = Input(Bool())
+  val out = Output(SInt(log2Ceil(2*sw.amplitude+1).W))
 }
 
 
@@ -30,5 +32,23 @@ class SineWaveGenIO (sw: SineWave) extends Bundle {
   * @param s : SineWave (internally contains period)
   */
 class SineWaveGen(sw: SineWave) extends Module {
-  val io = ???
+  val io = IO(new SineWaveGenIO(sw))
+
+  val lut = VecInit(Seq.tabulate(sw.period)(i => sw(i).S))
+  val cnt = RegInit(0.U(log2Ceil(sw.period).W))
+  val nxt = Wire(UInt(log2Ceil(sw.period).W))
+
+  nxt := cnt + io.stride
+  when(io.en) {
+    cnt := nxt
+    when(nxt >= sw.period.U) {
+      cnt := nxt - sw.period.U
+    }
+  }
+  io.out := lut(cnt)
+}
+
+
+object Main extends App {
+  println(getVerilogString(new SineWaveGen(new SineWave(3, 128))))
 }
